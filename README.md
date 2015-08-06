@@ -4,7 +4,7 @@ HTML/CSS/DOM Parts and Roots Proposal
 
 ## Status
 
-This document is "pre-specification" which means that I haven't even figured out enough spec bureaucracy to give this document a proper status.
+This document is "pre-specification" which means that I haven't even figured out enough spec bureaucracy to give this document a proper status. It's been [posted to the WICG Discourse](http://discourse.wicg.io/t/html-parts-and-roots/1032), and that's about it.
 
 ## Overview
 
@@ -31,7 +31,7 @@ Shadow DOM is supposed to solve this, but it comes with a handful of even worse 
 - Indexing elements *within* the component requires you to either go full-hog about designing the inner HTML to depend on Shadow DOM's ID isolation, or use clumsy class-based addressing techniques.
 - Shadow DOM contexts can't be created declaratively (without Custom Elements, which require lots of JS and bring further constraints).
 
-Proot elements don't *replace* Shadow DOM, they just a lighter option than Shadow DOM contexts for *basic* encapsulation. (Indeed, the limited-descendant selector proposed in this spec *also* addresses the aforementioned issues around defining styles within Shadow DOM.) It provides a facility page authors may use to create a hierarchy *in the context of their page*, allowing them to have simple and straightforward access *within the boundaries of their hierarchy*, without being concerned about namespacing *at every level* (the scope of concern for namespace schemes can be limited to selecting the proot).
+Proot elements don't *replace* Shadow DOM, they just introduce a lighter option than Shadow DOM contexts for *basic* encapsulation. (Indeed, the limited-descendant selector proposed in this spec *also* addresses the aforementioned issues around defining styles within Shadow DOM.) It provides a facility page authors may use to create a hierarchy *in the context of their page*, allowing them to have simple and straightforward access *within the boundaries of their hierarchy*, without being concerned about namespacing *at every level* (the scope of concern for namespace schemes can be limited to selecting the proot).
 
 ## DOM Parts
 
