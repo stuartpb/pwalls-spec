@@ -207,5 +207,4 @@ A standard structure for the standard elements UAs currently construct within Sh
 ## TODO
 
 - Everything marked "TODO" above.
-- Add example with more complex components, with an example using part names not traversing proot boundaries (which is largely the point of having `part` and not just using `class` for this stuff).
 - Add proposals for what the standard element parts look like.
