@@ -16,17 +16,66 @@ This document proposes two new attributes that, like `class` and `id`, may be ap
 
 ## Motivation
 
-In short: because Shadow DOM is too complicated, and Custom Elements is *way* too complicated. This spec doesn't *replace* Shadow DOM, it just makes it so you don't have to use it just so you can have *basic* encapsulation. (Indeed, this new approach *also works within* Shadow DOM.)
+It's still not great to write components in HTML:
 
-It provides a facility page authors may use to create a hierarchy *within* the context of their page, allowing them to have simple and strightforward access *within* those hierarchies (as opposed to approaches like the failed `/deep/` selector for styling within Shadow DOM).
+- CSS selectors always applying globally leads to unduly elaborate namespacing schemes like BEM.
+- There's still no real good solution for addressing *unique children* of an element.
+
+Shadow DOM is supposed to solve this, but it comes with a handful of even worse problems:
+
+- The isolated context cuts you off from reusing your page styles.
+- Just because I want to style for a component, doesn't mean I want to make its children inaccessible to `getElementsByTagName` &c.
+- Styles defined by the page to apply *within* the context of Shadow DOM are impossible (the closest this came to a solution was `/deep/`, which only served to bring all the contextual problems of CSS selectors back and undo the most significant guarantee Shadow DOM is supposed to provide).
+- Indexing elements *within* the component requires you to either go full-hog about designing the inner HTML to depend on Shadow DOM's ID isolation, or use clumsy class-based addressing techniques.
+- Shadow DOM contexts can't be created declaratively (without Custom Elements, which require lots of JS and bring further constraints).
+
+Proot elements don't *replace* Shadow DOM, they just make it so you don't have to use Shadow DOM contexts just so you can have *basic* encapsulation. (Indeed, this new approach introduces a new selector component that *also* fixes the aforementioned problem for defining styles within Shadow DOM.) It provides a facility page authors may use to create a hierarchy *in the context of their page*, allowing them to have simple and straightforward access *within the boundries of their hierarchy*, without being concerned about namespacing *at every level* (the scope of concern for namespace schemes can be limited to selecting the proot).
 
 ## DOM Parts
 
-Elements with `root` defined (and Shadow DOM roots) have a `getPart()` function, which works similarly to how `getElementById` works, except looking for `part` rather than `id` and avoiding traversal beyond proot boundaries as well as document boundaries.
+Elements with `root` defined (and Shadow DOM roots (and maybe `document`, for base-class simplicity)) have a `getPart()` function, which works similarly to how `getElementById` or `getElementByClassName[0]` works (doing a depth-first search under the element), except looking for `part` rather than `id` and avoiding traversal beyond proot boundaries (as well as the document boundaries which all traversal algorithms avoid).
 
-(Defining this on Shadow DOM roots may mean it's simpler to also define these on the root `document` for a page.)
+Example: say I have this HTML:
 
-Alternately, elements may have a `parts` object with accessors for each, similar to `dataset` or `window`. (I honestly think UAs should provide both - I feel there are enough specs forcing authors to use their opinion-of-the-week access pattern that doesn't match the rest of what the author is working with.)
+```html
+<div id="example-lotto" class="lotto" root>
+  <div class="lid">
+    <span part="timer" id="example-lotto-timer">108:00</span>
+  </div>
+  <div part="bubble" root id="example-lotto-bubble">
+    <div part="funnel" id="example-bubble-funnel">
+      <span class="ball">42</span>
+    </div>
+    <div part="track" id="example-running-track">
+      <span class="ball">23</span>
+      <span class="ball">16</span>
+    </div>
+  </div>
+  <div part="track" id="example-chosen-track">
+    <span class="ball">4</span>
+    <span class="ball">8</span>
+    <span class="ball">15</span>
+  </div>
+</div>
+```
+
+(Note: This element would normally be created as one of many, having no IDs defined. The IDs are purely for illustrative purposes in the following description.)
+
+Let `exampleLotto = document.getElementById('example-lotto')`.
+
+Running `exampleLotto.getPart('timer')` would return the element with the ID `example-lotto-timer`, as that is the unique (first) element under `exampleLotto` with the `part` attribute value `timer`.
+
+Running `exampleLotto.getPart('bubble')` would return the element with the ID `example-lotto-bubble`, as that is the unique (first) element under `exampleLotto` with the `part` attribute value `bubble`. (The fact that the element itself has a `root` value does not stop the *element itself* from being found.)
+
+Running `exampleLotto.getPart('funnel')` would return `null`, as the only element with the `part` attribute value `funnel` underneath `exampleLotto` is underneath the element with the ID `example-lotto-bubble`, which has the `root` attribute defined, causing the search to not recurse further into that element's descendants. (Getting the element with the ID `example-bubble-funnel` would require starting the search from its first ancestor with the `root` attribute, namely the element with the ID `example-lotto-funnel`, ie. `exampleLotto.getPart('bubble').getPart('funnel')`.
+
+Running `exampleLotto.getPart('track')` would return would return the element with the ID `example-chosen-track`, as that is the unique (first) element under `exampleLotto` with the `part` attribute value `track` that is not underneath an element (namely, the element with the ID `example-lotto-bubble`) which has the `root` attribute defined (which causes the search to not recurse further into that element's descendants, hence skipping the element with the ID `example-running-track`).
+
+Running `exampleLotto.getPart('bubble').getPart('track')` would return the element with the ID `example-running-track`, as that is the unique (first) element under `exampleLotto.getPart('bubble')` with the `part` attribute value `track`.
+
+### Alternate part access paradigm
+
+Alternately, elements could have a `parts` object with an accessor that follows the logic described for `getPart()` above, providing each `part` under the proot as a property, similar to how `dataset` provides `data-` attributes or `window` (unreliably) provides elements by ID. (I honestly think UAs should provide both - I feel there are enough specs forcing authors to use their opinion-of-the-week access pattern that doesn't match the rest of what the author is working with.)
 
 ## Part Boundary Selector
 
