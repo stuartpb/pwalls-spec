@@ -14,6 +14,8 @@ This document proposes two new attributes that, like `class` and `id`, may be ap
 - `part`, an attribute with a name value, following the same uniqueness and traversal constraints within proot boundaries as `id` has within document boundaries.
   - `id` may still be defined on an element with `part`, as they have different access implications. (A framework or polyfill may generate `id` values to uniquely identify every element in a document: this will not affect `part`.)
 
+It also proposes a new DOM API for accessing elements using these attributes, and a new limited-descendant CSS selector that selects within the boundaries defined by these attributes.
+
 ## Motivation
 
 It's still not great to write components in HTML:
@@ -29,7 +31,7 @@ Shadow DOM is supposed to solve this, but it comes with a handful of even worse 
 - Indexing elements *within* the component requires you to either go full-hog about designing the inner HTML to depend on Shadow DOM's ID isolation, or use clumsy class-based addressing techniques.
 - Shadow DOM contexts can't be created declaratively (without Custom Elements, which require lots of JS and bring further constraints).
 
-Proot elements don't *replace* Shadow DOM, they just make it so you don't have to use Shadow DOM contexts just so you can have *basic* encapsulation. (Indeed, this new approach introduces a new selector component that *also* fixes the aforementioned problem for defining styles within Shadow DOM.) It provides a facility page authors may use to create a hierarchy *in the context of their page*, allowing them to have simple and straightforward access *within the boundries of their hierarchy*, without being concerned about namespacing *at every level* (the scope of concern for namespace schemes can be limited to selecting the proot).
+Proot elements don't *replace* Shadow DOM, they just a lighter option than Shadow DOM contexts for *basic* encapsulation. (Indeed, the limited-descendant selector proposed in this spec *also* addresses the aforementioned issues around defining styles within Shadow DOM.) It provides a facility page authors may use to create a hierarchy *in the context of their page*, allowing them to have simple and straightforward access *within the boundaries of their hierarchy*, without being concerned about namespacing *at every level* (the scope of concern for namespace schemes can be limited to selecting the proot).
 
 ## DOM Parts
 
