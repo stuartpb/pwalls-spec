@@ -32,6 +32,8 @@ Alternately, elements may have a `parts` object with accessors for each, similar
 
 A `/` character may be used after a selector specifying a element, ID, and/or class, to define a proot or Shadow DOM boundary crossing. Selectors to the right of the `/` may only specify elements, classes, or part or ID names: the `#` character, after a `/`, refers to either IDs or parts within that DOM / proot boundary. It *must not cross* further proot boundaries.
 
+Note: It is important to note that the part *left of any slashes* may - like all other selectors - traverse *any number* of proot elements. The proot boundaries *only* come into play *around the slash*. Any non-slash descendant selectors (namely, the whitespace "general descendant" selector) *do not* follow rules regarding proot boundaries, *even after a slash*.
+
 ## Differences between proot and Shadow DOM
 
 - Elements within a proot are still selected by selectors in the top-level document, as well as functions like `getElementsByClassName`.
