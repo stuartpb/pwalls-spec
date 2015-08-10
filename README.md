@@ -1,6 +1,4 @@
-# proot-spec
-
-HTML/CSS/DOM Parts and Roots Proposal
+# HTML Parts and Walls
 
 ## Status
 
@@ -10,11 +8,9 @@ This document is "pre-specification" which means that I haven't even figured out
 
 This document proposes two new attributes that, like `class` and `id`, may be applied to any element in HTML:
 
-- `root`, a boolean attribute specifying that the element is a pseudo-root, herefore shortened as "proot" (another potential name for this attribute if `root` is deemed to be too broad/conflict-prone for a global attribute name).
-- `part`, an attribute with a name value, following the same uniqueness and traversal constraints within proot boundaries as `id` has within document boundaries.
+- `wall`, a boolean attribute specifying that the element is to be treated as a boundary for the purposes of the `getPart()` function and the Walled Descendant Selector defined below.
+- `part`, an attribute with a name value, following the same uniqueness and traversal constraints within walled boundaries as `id` has within document boundaries.
   - `id` may still be defined on an element with `part`, as they have different access implications. (A framework or polyfill may generate `id` values to uniquely identify every element in a document: this will not affect `part`.)
-
-It also proposes a new DOM API for accessing elements using these attributes, and a new limited-descendant CSS selector that selects within the boundaries defined by these attributes.
 
 ## Motivation
 
@@ -31,20 +27,20 @@ Shadow DOM is supposed to solve this, but it comes with a handful of even worse 
 - Indexing elements *within* the component requires you to either go full-hog about designing the inner HTML to depend on Shadow DOM's ID isolation, or use clumsy class-based addressing techniques.
 - Shadow DOM contexts can't be created declaratively (without Custom Elements, which require lots of JS and bring further constraints).
 
-Proot elements don't *replace* Shadow DOM, they just introduce a lighter option than Shadow DOM contexts for *basic* encapsulation. (Indeed, the limited-descendant selector proposed in this spec *also* addresses the aforementioned issues around defining styles within Shadow DOM.) It provides a facility page authors may use to create a hierarchy *in the context of their page*, allowing them to have simple and straightforward access *within the boundaries of their hierarchy*, without being concerned about namespacing *at every level* (the scope of concern for namespace schemes can be limited to selecting the proot).
+Walled elements introduce a lighter option than Shadow DOM contexts for *basic* encapsulation. (For styling within heavier encapsulation, the Walled Descendant selector may *also* be used for *crossing* Shadow DOM boundaries.) It provides a facility page authors may use to create a hierarchy *in the context of their page*, allowing them to have simple and straightforward access *within the boundaries of their hierarchy*, without being concerned about namespacing *at every level* (the scope of concern for namespace schemes can be limited to selecting the proot).
 
 ## DOM Parts
 
-Elements with `root` defined (and Shadow DOM roots (and maybe `document`, for base-class simplicity)) have a `getPart()` function, which works similarly to how `getElementById` or `getElementByClassName[0]` works (doing a depth-first search under the element), except looking for `part` rather than `id` and avoiding traversal beyond proot boundaries (as well as the document boundaries which all traversal algorithms avoid).
+Elements have a `getPart()` function, which works similarly to how `getElementById` or `getElementByClassName[0]` works (doing a depth-first search under the element), except looking for `part` rather than `id` and avoiding traversal beyond wall boundaries (as well as the document boundaries which all traversal algorithms avoid).
 
 Example: say I have this HTML:
 
 ```html
-<div id="example-lotto" class="lotto" root>
+<div id="example-lotto" class="lotto" wall>
   <div class="lid">
     <span part="timer" id="example-lotto-timer">108:00</span>
   </div>
-  <div part="bubble" root id="example-lotto-bubble">
+  <div part="bubble" wall id="example-lotto-bubble">
     <div part="funnel" id="example-bubble-funnel">
       <span class="ball">42</span>
     </div>
@@ -67,37 +63,38 @@ Let `exampleLotto = document.getElementById('example-lotto')`.
 
 Running `exampleLotto.getPart('timer')` would return the element with the ID `example-lotto-timer`, as that is the unique (first) element under `exampleLotto` with the `part` attribute value `timer`.
 
-Running `exampleLotto.getPart('bubble')` would return the element with the ID `example-lotto-bubble`, as that is the unique (first) element under `exampleLotto` with the `part` attribute value `bubble`. (The fact that the element itself has a `root` value does not stop the *element itself* from being found.)
+Running `exampleLotto.getPart('bubble')` would return the element with the ID `example-lotto-bubble`, as that is the unique (first) element under `exampleLotto` with the `part` attribute value `bubble`. (The fact that the element itself has a `wall` value does not stop the *element itself* from being found.)
 
-Running `exampleLotto.getPart('funnel')` would return `null`, as the only element with the `part` attribute value `funnel` underneath `exampleLotto` is underneath the element with the ID `example-lotto-bubble`, which has the `root` attribute defined, causing the search to not recurse further into that element's descendants. (Getting the element with the ID `example-bubble-funnel` would require starting the search from its first ancestor with the `root` attribute, namely the element with the ID `example-lotto-funnel`, ie. `exampleLotto.getPart('bubble').getPart('funnel')`.
+Running `exampleLotto.getPart('funnel')` would return `null`, as the only element with the `part` attribute value `funnel` underneath `exampleLotto` is underneath the element with the ID `example-lotto-bubble`, which has the `wall` attribute defined, causing the search to not recurse further into that element's descendants. (Getting the element with the ID `example-bubble-funnel` would require starting the search from its first ancestor with the `wall` attribute, namely the element with the ID `example-lotto-funnel`, ie. `exampleLotto.getPart('bubble').getPart('funnel')`.
 
-Running `exampleLotto.getPart('track')` would return would return the element with the ID `example-chosen-track`, as that is the unique (first) element under `exampleLotto` with the `part` attribute value `track` that is not underneath an element (namely, the element with the ID `example-lotto-bubble`) which has the `root` attribute defined (which causes the search to not recurse further into that element's descendants, hence skipping the element with the ID `example-running-track`).
+Running `exampleLotto.getPart('track')` would return would return the element with the ID `example-chosen-track`, as that is the unique (first) element under `exampleLotto` with the `part` attribute value `track` that is not underneath an element (namely, the element with the ID `example-lotto-bubble`) which has the `wall` attribute defined (which causes the search to not recurse further into that element's descendants, hence skipping the element with the ID `example-running-track`).
 
 Running `exampleLotto.getPart('bubble').getPart('track')` would return the element with the ID `example-running-track`, as that is the unique (first) element under `exampleLotto.getPart('bubble')` with the `part` attribute value `track`.
 
 ### Alternate part access paradigm
 
-Alternately, elements could have a `parts` object with an accessor that follows the logic described for `getPart()` above, providing each `part` under the proot as a property, similar to how `dataset` provides `data-` attributes or `window` (unreliably) provides elements by ID. (I honestly think UAs should provide both - I feel there are enough specs forcing authors to use their opinion-of-the-week access pattern that doesn't match the rest of what the author is working with.)
+Alternately, elements could have a `parts` object with an accessor that follows the logic described for `getPart()` above, providing each `part` inside the wall as a property, similar to how `dataset` provides `data-` attributes or `window` (unreliably) provides elements by ID. (I honestly think UAs should provide both - I feel there are enough specs forcing authors to use their opinion-of-the-week access pattern that doesn't match the rest of what the author is working with.)
 
 ## Part Boundary Selector
 
-A `/` character may be used after a selector specifying a element, ID, and/or class, to define a proot or Shadow DOM boundary crossing. Selectors to the right of the `/` may only specify elements, classes, or part or ID names: the `#` character, after a `/`, refers to either IDs or parts within that DOM / proot boundary. It *must not cross* further proot boundaries.
+A `|>` sequence may be used after a selector specifying a element, ID, and/or class, to define a wall or Shadow DOM boundary crossing. Selectors to the right of the `|>` may only specify elements, classes, or part or ID names: the `#` character, after a `|>`, refers to either IDs or parts within that DOM / wall. It *must not cross* further walls.
 
-Note: It is important to note that the part *left of any slashes* may - like all other selectors - traverse *any number* of proot elements. The proot boundaries *only* come into play *around the slash*. Any non-slash descendant selectors (namely, the whitespace "general descendant" selector) *do not* follow rules regarding proot boundaries, *even after a slash*.
+Note: It is important to note that the part *left of the walled desecendant selector* may - like all other selectors - traverse *any number* of walls. Walls *only* come into play *around the walled descendant selector*. Any non-walled descendant selectors (namely, the whitespace "general descendant" selector), as before, *are not separated* by walls.
 
-## Differences between proot and Shadow DOM
+## Differences between walled elements and Shadow DOM
 
-- Elements within a proot are still selected by selectors in the top-level document, as well as functions like `getElementsByClassName`.
-- proots can be defined without JS.
+- Elements under a walled element are still selected by selectors in the top-level document, as well as functions like `getElementsByClassName`.
+- Walls can be defined without JS.
 
 ## Differences between part and class
 
-- Parts are expected to be unique within the context of their proot. Classes have no such restriction.
-- Unlike classes, parts are not found beneath a proot boundary.
+- Unlike class names, parts are expected to be unique within the context of their wall (an expectation which validators or other developer tools may take advantage of).
+- Part names under walls do *not* have to be considered in the global namespace, unlike class names.
+- Unlike `getElementsByClassName`, parts are not restricted beyond walls.
 
 ## Extensions to existing elements
 
-A standard structure for the standard elements UAs currently construct within Shadow DOM could be defined, using `part` attributes to refer to a hierarchy of their components, for access in styling, as an alternative to non-standard vendor-prefixed pseudo-elements, as we currently use. (This includes the sub-components of scrollbars, which would remain pseudo-elements, but be standardized as pseudo-elements containing proots.)
+A standard structure for the standard elements UAs currently construct within Shadow DOM could be defined, using `part` attributes to refer to a hierarchy of their components, for access in styling, as an alternative to non-standard vendor-prefixed pseudo-elements, as we currently use. (This includes the sub-components of scrollbars, which would remain pseudo-elements, but be standardized as pseudo-elements containing walls.)
 
 ## Example: Doctor Listings 
 
