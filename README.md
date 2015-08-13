@@ -85,6 +85,7 @@ Note: It is important to note that the part *left of the walled desecendant sele
 
 - Elements under a walled element are still selected by selectors in the top-level document, as well as functions like `getElementsByClassName`.
 - Walls can be defined without JS.
+- Child elements may be moved between walled elements without having to create a copy with `importNode`, discard the old node, and expecting things that `importNode` doesn't copy to break.
 
 ## Differences between `part` and `class` or `name`
 
