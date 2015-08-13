@@ -86,11 +86,11 @@ Note: It is important to note that the part *left of the walled desecendant sele
 - Elements under a walled element are still selected by selectors in the top-level document, as well as functions like `getElementsByClassName`.
 - Walls can be defined without JS.
 
-## Differences between part and class
+## Differences between `part` and `class` or `name`
 
 - Unlike class names, parts are expected to be unique within the context of their wall (an expectation which validators or other developer tools may take advantage of).
-- Part names under walls do *not* have to be considered in the global namespace, unlike class names.
-- Unlike `getElementsByClassName`, parts are not restricted beyond walls.
+- Part names under walls do *not* have to be considered in the global namespace, unlike class names. (Similarly, part names do *not* have to correspond to the name used for a value when submitting a form.)
+- Unlike `getElementsByName` or `getElementsByClassName`, `getPart` is restricted to wall boundaries.
 
 ## Extensions to existing elements
 
