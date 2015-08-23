@@ -71,7 +71,7 @@ Running `exampleLotto.getPart('track')` would return would return the element wi
 
 Running `exampleLotto.getPart('bubble').getPart('track')` would return the element with the ID `example-running-track`, as that is the unique (first) element under `exampleLotto.getPart('bubble')` with the `part` attribute value `track`.
 
-## Part Boundary Selector
+## Walled Descendant Selector
 
 A `|>` sequence may be used after a selector specifying a element, ID, and/or class, to define a wall or Shadow DOM boundary crossing. Selectors to the right of the `|>` may only specify elements, classes, or part or ID names: the `#` character, after a `|>`, refers to either IDs or parts within that DOM / wall. It *must not cross* further walls.
 
