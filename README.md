@@ -36,20 +36,20 @@ Elements have a `getPart()` function, which works similarly to how `getElementBy
 Example: say I have this HTML:
 
 ```html
-<div id="example-lotto" class="lotto" wall>
+<div id="fig1" class="lotto" wall>
   <div class="lid">
-    <span part="timer" id="example-lotto-timer">108:00</span>
+    <span part="timer" id="fig2">108:00</span>
   </div>
-  <div part="bubble" wall id="example-lotto-bubble">
-    <div part="funnel" id="example-bubble-funnel">
+  <div part="bubble" wall id="fig3">
+    <div part="funnel" id="fig4">
       <span class="ball">42</span>
     </div>
-    <div part="track" id="example-running-track">
+    <div part="track" id="fig5">
       <span class="ball">23</span>
       <span class="ball">16</span>
     </div>
   </div>
-  <div part="track" id="example-chosen-track">
+  <div part="track" id="fig6">
     <span class="ball">4</span>
     <span class="ball">8</span>
     <span class="ball">15</span>
@@ -59,17 +59,17 @@ Example: say I have this HTML:
 
 (Note: This element would normally be created as one of many, having no IDs defined. The IDs are purely for illustrative purposes in the following description.)
 
-Let `exampleLotto = document.getElementById('example-lotto')`.
+Let `fig1 = document.getElementById('fig1')`.
 
-Running `exampleLotto.getPart('timer')` would return the element with the ID `example-lotto-timer`, as that is the unique (first) element under `exampleLotto` with the `part` attribute value `timer`.
+Running `fig1.getPart('timer')` would return the element with the ID `fig2`, as that is the unique (first) element under `fig1` with the `part` attribute value `timer`.
 
-Running `exampleLotto.getPart('bubble')` would return the element with the ID `example-lotto-bubble`, as that is the unique (first) element under `exampleLotto` with the `part` attribute value `bubble`. (The fact that the element itself has a `wall` value does not stop the *element itself* from being found.)
+Running `fig1.getPart('bubble')` would return the element with the ID `fig3`, as that is the unique (first) element under `fig1` with the `part` attribute value `bubble`. (The fact that the element itself has a `wall` value does not stop the *element itself* from being found.)
 
-Running `exampleLotto.getPart('funnel')` would return `null`, as the only element with the `part` attribute value `funnel` underneath `exampleLotto` is underneath the element with the ID `example-lotto-bubble`, which has the `wall` attribute defined, causing the search to not recurse further into that element's descendants. (Getting the element with the ID `example-bubble-funnel` would require starting the search from its first ancestor with the `wall` attribute, namely the element with the ID `example-lotto-funnel`, ie. `exampleLotto.getPart('bubble').getPart('funnel')`.
+Running `fig1.getPart('funnel')` would return `null`, as the only element with the `part` attribute value `funnel` underneath `fig1` is underneath the element with the ID `fig3`, which has the `wall` attribute defined, causing the search to not recurse further into that element's descendants. (Getting the element with the ID `fig4` would require starting the search from its first ancestor with the `wall` attribute, namely the element with the ID `fig3`, ie. `fig1.getPart('bubble').getPart('funnel')`.
 
-Running `exampleLotto.getPart('track')` would return would return the element with the ID `example-chosen-track`, as that is the unique (first) element under `exampleLotto` with the `part` attribute value `track` that is not underneath an element (namely, the element with the ID `example-lotto-bubble`) which has the `wall` attribute defined (which causes the search to not recurse further into that element's descendants, hence skipping the element with the ID `example-running-track`).
+Running `fig1.getPart('track')` would return would return the element with the ID `fig6`, as that is the unique (first) element under `fig1` with the `part` attribute value `track` that is not underneath an element (namely, the element with the ID `fig3`) which has the `wall` attribute defined (which causes the search to not recurse further into that element's descendants, hence skipping the element with the ID `fig5`).
 
-Running `exampleLotto.getPart('bubble').getPart('track')` would return the element with the ID `example-running-track`, as that is the unique (first) element under `exampleLotto.getPart('bubble')` with the `part` attribute value `track`.
+Running `fig1.getPart('bubble').getPart('track')` would return the element with the ID `fig5`, as that is the unique (first) element under `fig1.getPart('bubble')` with the `part` attribute value `track`.
 
 ## Walled Descendant Selector
 
