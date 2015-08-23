@@ -27,7 +27,7 @@ Shadow DOM is supposed to solve this, but it comes with a handful of even worse 
 - Indexing elements *within* the component requires you to either go full-hog about designing the inner HTML to depend on Shadow DOM's ID isolation, or use clumsy class-based addressing techniques.
 - Shadow DOM contexts can't be created declaratively (without Custom Elements, which require lots of JS and bring further constraints).
 
-Walled elements introduce a lighter option than Shadow DOM contexts for *basic* encapsulation. (For styling within heavier encapsulation, the Walled Descendant selector may *also* be used for *crossing* Shadow DOM boundaries.) It provides a facility page authors may use to create a hierarchy *in the context of their page*, allowing them to have simple and straightforward access *within the boundaries of their hierarchy*, without being concerned about namespacing *at every level* (the scope of concern for namespace schemes can be limited to selecting the proot).
+Walled elements introduce a lighter option than Shadow DOM contexts for *basic* encapsulation. (For styling within heavier encapsulation, the Walled Descendant combinator may *also* be used for *crossing* Shadow DOM boundaries.) It provides a facility page authors may use to create a hierarchy *in the context of their page*, allowing them to have simple and straightforward access *within the boundaries of their hierarchy*, without being concerned about namespacing *at every level* (the scope of concern for namespace schemes can be limited to selecting the proot).
 
 ## DOM Parts
 
@@ -71,11 +71,11 @@ Running `fig1.getPart('track')` would return would return the element with the I
 
 Running `fig1.getPart('bubble').getPart('track')` would return the element with the ID `fig5`, as that is the unique (first) element under `fig1.getPart('bubble')` with the `part` attribute value `track`.
 
-## Walled Descendant Selector
+## The Walled Descendant Combinator for CSS Selectors
 
-A `|>` sequence may be used after a selector specifying a element, ID, and/or class, to define a wall or Shadow DOM boundary crossing. Selectors to the right of the `|>` may only specify elements, classes, or part or ID names: the `#` character, after a `|>`, refers to either IDs or parts within that DOM / wall. It *must not cross* further walls.
+A `|>` sequence may be used after a [compound selector](https://drafts.csswg.org/selectors-4/#compound), to define a wall or Shadow DOM boundary crossing. The compound selector to the right of the `|>` only matches descendants of the LHS that *do not cross* further walls (though the matched element may itself have a `wall` attribute specified, the descendants of a child with `wall` specified *will not* match the combinator). The `#` character, after a `|>`, refers to *either IDs or parts* within the LHS walled context (the specificity is increased as an ID selector for either kind of match).
 
-Note: It is important to note that the part *left of the walled desecendant selector* may - like all other selectors - traverse *any number* of walls. Walls *only* come into play *around the walled descendant selector*. Any non-walled descendant selectors (namely, the whitespace "general descendant" selector), as before, *are not separated* by walls.
+Note: It is important to note that *further combinators left of the walled desecendant combinator* may traverse *any number* of walls. Walls *only* come into play *around the walled descendant combinator*. Any non-walled descendant combinators (namely, the whitespace or `>>` "general" descendant combinator), as before, *are not separated* by walls.
 
 ## Differences between walled elements and Shadow DOM
 
