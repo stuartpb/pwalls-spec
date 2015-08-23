@@ -100,30 +100,30 @@ A standard structure for the standard elements UAs currently construct within Sh
 <head>
 <style>
 /* TODO: finish example stylesheet */
-.profile/#photo {
+.profile |> #photo {
 
 }
-.profile/#name {
+.profile |> #name {
 
 }
-.profile/#bio {
+.profile |> #bio {
 
 }
 </style>
 </head>
 <body>
 <div id="profiles">
-  <div class="profile" root>
+  <div class="profile" wall>
     <img src="person-a.jpg" part="avatar">
     <div part="name">Foo Bar</div>
     <p part="bio">lorem ipsum</p>
   </div>
-  <div class="profile" root>
+  <div class="profile" wall>
     <img src="person-b.jpg" part="avatar">
     <div part="name">Boo Car</div>
     <p part="bio">lorem ipsum</p>
   </div>
-  <div class="profile" root>
+  <div class="profile" wall>
     <img src="person-c.jpg" part="avatar">
     <div part="name">Kenny Baz</div>
     <p part="bio">lorem ipsum</p>
@@ -140,18 +140,18 @@ A standard structure for the standard elements UAs currently construct within Sh
 <head>
 <style>
 /* TODO: finish example stylesheet */
-.message-card/#avatar {
+.message-card|> #avatar {
 
 }
-.message-card/#name {
+.message-card|> #name {
 
 }
-.message-card/#message {
+.message-card|> #message {
 
 }
 </style>
 <template id="message-card-template">
-  <div class="message-card" root>
+  <div class="message-card" wall>
     <img part="avatar">
     <div part="name"></div>
     <div part="message"></div>
@@ -176,21 +176,21 @@ A standard structure for the standard elements UAs currently construct within Sh
 </head>
 <body>
 <div id="messages">
-  <div class="message-card" id="7cf00c89-800f-495b-9e44-a2ffd9df817c" root>
+  <div class="message-card" id="7cf00c89-800f-495b-9e44-a2ffd9df817c" wall>
   </div>
-  <div class="message-card" id="26888874-dbe9-4efc-8f88-873af7139a4d" root>
+  <div class="message-card" id="26888874-dbe9-4efc-8f88-873af7139a4d" wall>
   </div>
-  <div class="message-card" id="5c212dc7-5d73-4759-a466-589a08d5a98e" root>
+  <div class="message-card" id="5c212dc7-5d73-4759-a466-589a08d5a98e" wall>
   </div>
-  <div class="message-card" id="ed8818ff-353d-4219-a28f-a97b531e95f2" root>
+  <div class="message-card" id="ed8818ff-353d-4219-a28f-a97b531e95f2" wall>
   </div>
-  <div class="message-card" id="331bb13b-7071-4d69-9b04-fb62502a5601" root>
+  <div class="message-card" id="331bb13b-7071-4d69-9b04-fb62502a5601" wall>
   </div>
-  <div class="message-card" id="7fc6ee0c-85d2-47e2-a8f4-4f499d44bfdb" root>
+  <div class="message-card" id="7fc6ee0c-85d2-47e2-a8f4-4f499d44bfdb" wall>
   </div>
-  <div class="message-card" id="95ca156f-8e59-4372-8e6f-bff9c8a7c4ac" root>
+  <div class="message-card" id="95ca156f-8e59-4372-8e6f-bff9c8a7c4ac" wall>
   </div>
-  <div class="message-card" id="cd3ac0ae-925f-45e8-a1e7-98e1b215ba9e" root>
+  <div class="message-card" id="cd3ac0ae-925f-45e8-a1e7-98e1b215ba9e" wall>
   </div>
 </div>
 <script>
