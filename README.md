@@ -89,7 +89,7 @@ Note: It is important to note that the part *left of the walled desecendant sele
 
 ## Differences between `part` and `class` or `name`
 
-- Unlike class names, parts are expected to be unique within the context of their wall (an expectation which validators or other developer tools may take advantage of).
+- Unlike class names, parts are expected to be unique within the context of their wall (which allows for optimizations to `getPart`, as well as warnings in validators, and other developer tool enhancements).
 - Part names under walls do *not* have to be considered in the global namespace, unlike class names. (Similarly, part names do *not* have to correspond to the name used for a value when submitting a form.)
 - Unlike `getElementsByName` or `getElementsByClassName`, `getPart` is restricted to wall boundaries.
 
