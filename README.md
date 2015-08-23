@@ -71,10 +71,6 @@ Running `exampleLotto.getPart('track')` would return would return the element wi
 
 Running `exampleLotto.getPart('bubble').getPart('track')` would return the element with the ID `example-running-track`, as that is the unique (first) element under `exampleLotto.getPart('bubble')` with the `part` attribute value `track`.
 
-### Alternate part access paradigm
-
-Alternately, elements could have a `parts` object with an accessor that follows the logic described for `getPart()` above, providing each `part` inside the wall as a property, similar to how `dataset` provides `data-` attributes or `window` (unreliably) provides elements by ID. (I honestly think UAs should provide both - I feel there are enough specs forcing authors to use their opinion-of-the-week access pattern that doesn't match the rest of what the author is working with.)
-
 ## Part Boundary Selector
 
 A `|>` sequence may be used after a selector specifying a element, ID, and/or class, to define a wall or Shadow DOM boundary crossing. Selectors to the right of the `|>` may only specify elements, classes, or part or ID names: the `#` character, after a `|>`, refers to either IDs or parts within that DOM / wall. It *must not cross* further walls.
